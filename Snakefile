@@ -1,22 +1,25 @@
 
-rule all:
-    input: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
+# the assembly
+#rule all:
+#    input: 
+#        "input_assembly/GCA_000180675.11_ASM18067v1.fq",
+#	"input_assembly/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz"
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
 rule download:
-	input: "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz"
+    input: "GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz"
     output: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     shell:'''
-    curl -L {input} -o {output}
+    curl -L https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/{input} -o {output}
     '''
-
+# unzip
 rule unzip:
     input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     output: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
     threads: 1
     resources:
-        mem_mb=2000,
-        time=2880
+         mem_mb=2000,
+         time=2880
     shell:'''
     gunzip -c {input} > {output}
     '''
