@@ -1,5 +1,6 @@
 
-
+rule all:
+    input: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
 rule download_genome:
     conda: "env-wget.yml"
