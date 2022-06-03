@@ -1,22 +1,18 @@
-#import pandas as pd
-#TMPDIR = "/scratch/rapeek"
-
 
 rule all:
-    input: "outputs/sbf1_stickle_baits.txt"
+    input: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
-# genbank: GCA_000180675.1
 rule download:
-    input: "URL/GCA_000180675.1.fna"
-    output: "file/GCA_000180675.1.fna"
+	input: "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz"
+    output: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     shell:'''
     curl -L {input} -o {output}
     '''
 
 rule unzip:
-    input: "GCA_000180675.1.fq.gz"
-    output: "assembly/GCA_000180675.1.fastq"
+    input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
+    output: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
     threads: 1
     resources:
         mem_mb=2000,
@@ -25,19 +21,19 @@ rule unzip:
     gunzip -c {input} > {output}
     '''
 
-rule grepsbf1:
-    input: "downloadedseq.fq"
-    output: "fqfile_of_bait_locs.fq"
-    shell:'''
-    #do some thing here
-    '''
+#rule grepsbf1:
+#    input: "downloadedseq.fq"
+#    output: "fqfile_of_bait_locs.fq"
+#    shell:'''
+#    #do some thing here
+#    '''
 
-rule bait_trim:
-    input: "fqfile_of_bait_locs.fq"
-    output: "filtered_flanking_regions_stickle"
-    shell:'''
-    #do some thing here
-    '''
+#rule bait_trim:
+#    input: "fqfile_of_bait_locs.fq"
+#    output: "filtered_flanking_regions_stickle"
+#    shell:'''
+#    #do some thing here
+#    '''
 
 #rule samtools_index:
 #    input:
