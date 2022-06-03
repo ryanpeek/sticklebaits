@@ -1,0 +1,29 @@
+---
+title: "eDNA Experiment Notes"
+description: |
+  Stickleback experiment notes
+author:
+  - name: R. Peek 
+date: "Updated `r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Overview
+
+General notes about process and steps to test eDNA population genomics approaches.
+
+## 2022-06-03
+
+Working on `snakemake` approach for downloading the stickleback genome, searching for `sbf1` cut sites, identifying flanking regions, and selecting baits from these 120bp regions.
+
+### Stickleback Genome
+
+Has been mapped, see the [NCBI FTP Website here](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/), and the [GenBank site here](https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/)
+
+
+
+
