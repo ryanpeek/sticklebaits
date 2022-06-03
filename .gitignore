@@ -45,3 +45,6 @@ vignettes/*.pdf
 input_assembly/
 
 .snakemake/
+
+# html files from Rmds
+*.html
