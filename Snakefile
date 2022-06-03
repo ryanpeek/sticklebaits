@@ -1,17 +1,13 @@
 
-# the assembly
-#rule all:
-#    input: 
-#        "input_assembly/GCA_000180675.11_ASM18067v1.fq",
-#	"input_assembly/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz"
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
-rule download:
-    input: "GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz"
+rule download_genome:
+    conda: "env-wget.yml"
     output: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     shell:'''
-    curl -L https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/{input} -o {output}
+    wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz -O {output}
     '''
+
 # unzip
 rule unzip:
     input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
