@@ -11,7 +11,7 @@ rule download:
     input: "URL/GCA_000180675.1.fna"
     output: "file/GCA_000180675.1.fna"
     shell:'''
-    curl {input} {output}
+    curl -L {input} -o {output}
     '''
 
 rule unzip:
@@ -38,3 +38,14 @@ rule bait_trim:
     shell:'''
     #do some thing here
     '''
+
+rule bcftools_call:
+	input:
+	    fa="data/genome.fa"
+	    bam=expand("sorted_reads/{sample}.bam", sample=SAMPLES),
+	    bai=expand("sorted_reads/{sample}.bam.bai", sample=SAMPLES)
+	output:
+	    "calls/all.vcf"
+        shell:
+	    "bcftools mpileup -f {input.fa} {input.bam} | "
+	    "bcftools call -mv - > {output}"
