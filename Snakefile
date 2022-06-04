@@ -35,6 +35,11 @@ rule unzip:
 #    #do some thing here
 #    '''
 
+# blast to see if there's a microbial match
+# could use sourmash gather but not read by read
+# probably blast to make sure there's not off target matches
+# could grab some sequence data from SRA and check for snp variability
+
 #rule samtools_index:
 #    input:
 #        "sorted_reads/{sample}.bam"

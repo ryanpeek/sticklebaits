@@ -38,5 +38,65 @@ Has been mapped, see:
  - [GenBank site here](https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/)
 
 
+### Thinking about Tags
+
+Use existing tags or SNPs to select things that may not accidentally select for microbial data or other things (algae, trees, etc). Sourmash would tell you for microbial data, but may need to use BLAST to see more broadly.
+
+ - https://www.ncbi.nlm.nih.gov/sra/SRX015871%5Baccn
+ - https://www.ncbi.nlm.nih.gov/sra/SRX028026%5Baccn
+ - https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
+ 
+ 
+## Try using SRA-tools
+
+You can have a config.yaml that has this info:
+```
+srr:
+  - SRR12345678
+
+```
+Then run with the following:
+
+```
+configfile: "include/rules/config.yaml"
+ 
+include: "include/rules/fasterqdump.rule"
+ 
+rule all:
+    input:
+        expand("01_raw/done__{srr}_dump", srr=config['srr'])
+
+rule prefetch:
+    output:
+        "01_raw/.prefetch/sra/{srr}.sra"
+    params:
+        "{srr} --max-size 50GB -O 01_raw"
+    log:
+        "01_raw/.prefetch/sra/{srr}.log"
+    conda:
+        "yamls/sra-tools.yaml"
+    shell:
+        """
+        prefetch {params} > {log} 2>&1 && touch {output}
+        """
+ 
+rule fastqdump:
+    input:
+        "01_raw/.prefetch/sra/{srr}.sra"
+    output:
+        touch("01_raw/done__{srr}_dump")
+    params:
+        args = "-S -O 01_raw/ -t 01_raw/",
+        id_srr = "{srr}"
+    log:
+        "01_raw/{srr}.log"
+    conda:
+        "yamls/sra-tools.yaml"
+    shell:
+        """
+        fasterq-dump {params.args} {params.id_srr} > {log} 2>&1 
+        """
+```
 
 
+Test it out: `snakemake -p -j 30 --use-conda -n`
