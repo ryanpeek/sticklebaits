@@ -103,6 +103,11 @@ Test it out: `snakemake -p -j 30 --use-conda -n`
 
 ## Grep for sbf1 (`CCTGCA/GG`)
 
+
+### see seqkit
+
+[Seqkit](https://bioinf.shenwei.me/seqkit/download/)
+
 If it's still zipped
 
 `zgrep -A1 'AANH01016955.1 Gasterosteus aculeatus cont1.016954, whole genome shotgun sequence' GCA_000180675.11_ASM18067v1_genomic.fna.gz`
