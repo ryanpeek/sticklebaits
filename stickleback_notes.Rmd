@@ -100,3 +100,19 @@ rule fastqdump:
 
 
 Test it out: `snakemake -p -j 30 --use-conda -n`
+
+## Grep for sbf1 (`CCTGCA/GG`)
+
+If it's still zipped
+
+`zgrep -A1 'AANH01016955.1 Gasterosteus aculeatus cont1.016954, whole genome shotgun sequence' GCA_000180675.11_ASM18067v1_genomic.fna.gz`
+
+For characters instead of lines, this returns seq only w 120 bp after the cut site (CCTGCA):
+
+```
+grep -o -P '.{0,0}CCTGCA.{0,120}' GCA_000180675.11_ASM18067v1.fq | wc -l
+```
+
+awk '/test_pattern/ {
+    match($0, /test_pattern/); print substr($0, RSTART - 10, RLENGTH + 20);
+}' file

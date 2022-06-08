@@ -1,6 +1,9 @@
 
 rule all:
-    input: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
+    input: 
+        "input_assembly/GCA_000180675.11_ASM18067v1.fq",
+        "output/bait_sbf1_120b_flank.txt"
+
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
 rule download_genome:
     conda: "env-wget.yml"
@@ -21,12 +24,14 @@ rule unzip:
     gunzip -c {input} > {output}
     '''
 
-#rule grepsbf1:
-#    input: "downloadedseq.fq"
-#    output: "fqfile_of_bait_locs.fq"
-#    shell:'''
-#    #do some thing here
-#    '''
+rule grep_sbf1:
+    input: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
+    output: "output/bait_sbf1_120b_flank.txt"
+    params: 
+        cutsite = "CCTGCA"
+    shell:'''
+    grep -o -P '.{{0,0}}{cutsite}.{{0,120}}' {input} > {output}
+    '''
 
 #rule bait_trim:
 #    input: "fqfile_of_bait_locs.fq"
