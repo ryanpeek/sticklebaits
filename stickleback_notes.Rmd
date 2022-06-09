@@ -171,3 +171,9 @@ For characters instead of lines, this returns seq only w 120 bp after the cut si
 ```
 grep -o -P '.{0,0}CCTGCAGG.{0,120}' GCA_000180675.11_ASM18067v1.fq | wc -l
 ```
+
+# Run
+
+```
+snakemake -r -n -c1
+```
