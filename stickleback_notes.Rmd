@@ -103,7 +103,7 @@ Test it out: `snakemake -p -j 30 --use-conda -n`
 
 ## Grep for sbf1 (`CCTGCAGG`)
 
-Common [6 bp cutter](https://en.wikipedia.org/wiki/List_of_restriction_enzyme_cutting_sites:_S)
+Common [8 bp cutter](https://en.wikipedia.org/wiki/List_of_restriction_enzyme_cutting_sites:_S)
 
 ### Using `seqkit`
 
