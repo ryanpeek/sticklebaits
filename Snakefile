@@ -6,7 +6,7 @@ rule all:
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
 rule download_genome:
-    conda: "env-wget.yml"
+    conda: "yamls/env-wget.yml"
     output: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     shell:'''
     wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz -O {output}
@@ -27,7 +27,7 @@ rule download_genome:
 rule grep_sbf1:
     input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     output: "output/bait_sbf1_seqs_to_clip.fa.gz"
-    conda: "env-seqkit.yml"
+    conda: "yamls/env-seqkit.yml"
     params: "CCTGCAGG"
     shell:"""
     seqkit grep -s -i -p {params} {input} | seqkit seq -n -s -u -w 0 -o {output}
