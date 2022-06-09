@@ -2,11 +2,12 @@
 rule all:
     input:
         "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz",
+	"input_assembly/GCA_000180675.11_ASM18067v1_seqlens.tsv",
         "output/baits_sbf1_120bp_flank.txt"
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
 rule download_genome:
-    conda: "yamls/env-wget.yml"
+    conda: "yamls/wget.yml"
     output: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     shell:'''
     wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz -O {output}
@@ -24,10 +25,18 @@ rule download_genome:
 #    gunzip -c {input} > {output}
 #    """
 
+rule seq_lengths:
+	input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
+	output:"input_assembly/GCA_000180675.11_ASM18067v1_seqlens.tsv"
+	#conda: "yamls/seqkit.yml"
+	shell:"""
+	bioawk -c fastx '{{print $name "\t" length($seq)}}' {input} > {output}
+	"""
+
 rule grep_sbf1:
     input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     output: "output/bait_sbf1_seqs_to_clip.fa.gz"
-    #conda: "yamls/env-seqkit.yml"
+    #conda: "yamls/seqkit.yml"
     params: "CCTGCAGG"
     shell:"""
     seqkit grep -s -i -p {params} {input} | seqkit seq -n -s -u -w 0 -o {output}

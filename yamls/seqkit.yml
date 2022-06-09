@@ -1,0 +1,9 @@
+name: seqkit
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - seqkit
+  - bioawk
+    #prefix: /home/rapeek/miniconda3/envs/seqkit

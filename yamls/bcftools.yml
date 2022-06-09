@@ -1,6 +1,7 @@
+name: bcftools
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
-  - wget
+  - bcftools=1.11

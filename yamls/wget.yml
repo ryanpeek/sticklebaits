@@ -1,6 +1,7 @@
+name: wget
 channels:
   - conda-forge
   - bioconda
   - defaults
 dependencies:
-  - bcftools=1.11
+  - wget
