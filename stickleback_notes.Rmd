@@ -101,23 +101,73 @@ rule fastqdump:
 
 Test it out: `snakemake -p -j 30 --use-conda -n`
 
-## Grep for sbf1 (`CCTGCA/GG`)
+## Grep for sbf1 (`CCTGCAGG`)
 
+Common [6 bp cutter](https://en.wikipedia.org/wiki/List_of_restriction_enzyme_cutting_sites:_S)
 
-### see seqkit
+### Using `seqkit`
 
 [Seqkit](https://bioinf.shenwei.me/seqkit/download/)
 
-If it's still zipped
-
-`zgrep -A1 'AANH01016955.1 Gasterosteus aculeatus cont1.016954, whole genome shotgun sequence' GCA_000180675.11_ASM18067v1_genomic.fna.gz`
-
-For characters instead of lines, this returns seq only w 120 bp after the cut site (CCTGCA):
+Get some stats about the file:
 
 ```
-grep -o -P '.{0,0}CCTGCA.{0,120}' GCA_000180675.11_ASM18067v1.fq | wc -l
+zcat GCA_000180675.11_67v1_genomic.fna.gz | seqkit stats
+
+# file  format  type  num_seqs      sum_len  min_len   avg_len  max_len
+# -     FASTA   DNA     16,957  446,610,788      101  26,337.8  698,234
+```
+Count Chromosome/Seqs:
+
+```
+seqkit seq GCA_0001806ASM18067v1_genomic.fna.gz -n | wc -l
 ```
 
-awk '/test_pattern/ {
-    match($0, /test_pattern/); print substr($0, RSTART - 10, RLENGTH + 20);
-}' file
+Get just the ID:
+
+```
+seqkit seq GCA_0001806ASM18067v1_genomic.fna.gz -n -i | head
+```
+
+Just print seq:
+
+```
+seqkit seq hairpin.fa.gz -s -w 0
+
+```
+
+Grep for Seq containing `CCTGCAGG`:
+
+```
+seqkit grep -s -i -p cctgcagg GCA_000180675.11_ASM18067v1_genomic.fna.gz -C | head
+
+# n=7367
+
+# grep and then pull the chrom only:
+seqkit grep -s -i -p cctgcagg GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqkit seq -n -i | head
+# AANH01000001.1
+# AANH01000002.1
+# AANH01000003.1
+# AANH01000006.1
+```
+
+```
+seqkit grep -s -i -p cctgcagg GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqkit seq -n -s -l | less
+```
+
+Then take that output and remove line breaks and then pipe to pull just the pieces we need (see below)
+
+```
+seqkit grep -s -i -p cctgcagg input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqkit seq -n -s -u -w 0 -o output/bait_sbf1_seqs_to_clip.fa.gz
+```
+
+
+
+
+### Using straight `grep`
+
+For characters instead of lines, this returns seq only w 120 bp after the cut site (CCTGCAGG):
+
+```
+grep -o -P '.{0,0}CCTGCAGG.{0,120}' GCA_000180675.11_ASM18067v1.fq | wc -l
+```

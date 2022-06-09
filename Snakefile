@@ -1,6 +1,6 @@
 
 rule all:
-    input: 
+    input:
         "input_assembly/GCA_000180675.11_ASM18067v1.fq",
         "output/bait_sbf1_120b_flank.txt"
 
@@ -12,7 +12,7 @@ rule download_genome:
     wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz -O {output}
     '''
 
-# unzip
+unzip
 rule unzip:
     input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     output: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
@@ -20,25 +20,26 @@ rule unzip:
     resources:
          mem_mb=2000,
          time=2880
-    shell:'''
-    gunzip -c {input} > {output}
-    '''
-
-rule grep_sbf1:
-    input: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
-    output: "output/bait_sbf1_120b_flank.txt"
-    #params: 
-    #    cutsite = "CCTGCA"
     shell:"""
-    grep -n -o -P ".{{0,0}}CCTGCA.{{0,120}}" {input} > {output}
+    gunzip -c {input} > {output}
     """
 
-#rule bait_trim:
-#    input: "fqfile_of_bait_locs.fq"
-#    output: "filtered_flanking_regions_stickle"
-#    shell:'''
-#    #do some thing here
-#    '''
+rule grep_sbf1:
+    input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
+    output: "output/bait_sbf1_seqs_to_clip.fa.gz"
+    conda: "env-seqkit.yml"
+    params:
+        cutsite = "CCTGCAGG"
+    shell:"""
+    seqkit grep -s -i -p {cutsite} {input} | seqkit seq -n -s -u -w 0 -o {output}
+    """
+
+rule bait_trim:
+    input: "output/bait_sbf1_seqs_to_clip.fa.gz"
+    output: "output/baits_sbf1_120b_flank.txt"
+    shell:"""
+    grep -o -P '.{{0,0}}CCTGCAGG.{{0,120}}' {input} > {output}
+    """
 
 # blast to see if there's a microbial match
 # could use sourmash gather but not read by read
