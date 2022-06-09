@@ -1,7 +1,7 @@
 
 rule all:
     input:
-        "input_assembly/GCA_000180675.11_ASM18067v1.fq",
+        "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz",
         "output/baits_sbf1_120bp_flank.txt"
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
@@ -28,10 +28,9 @@ rule grep_sbf1:
     input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     output: "output/bait_sbf1_seqs_to_clip.fa.gz"
     conda: "env-seqkit.yml"
-    params:
-        cutsite = "CCTGCAGG"
+    params: "CCTGCAGG"
     shell:"""
-    seqkit grep -s -i -p {cutsite} {input} | seqkit seq -n -s -u -w 0 -o {output}
+    seqkit grep -s -i -p {params} {input} | seqkit seq -n -s -u -w 0 -o {output}
     """
 
 rule bait_trim:
