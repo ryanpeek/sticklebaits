@@ -2,7 +2,7 @@
 rule all:
     input:
         "input_assembly/GCA_000180675.11_ASM18067v1.fq",
-        "output/bait_sbf1_120b_flank.txt"
+        "output/baits_sbf1_120b_flank.txt"
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
 rule download_genome:
@@ -12,7 +12,7 @@ rule download_genome:
     wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/180/675/GCA_000180675.1_ASM18067v1/GCA_000180675.1_ASM18067v1_genomic.fna.gz -O {output}
     '''
 
-unzip
+# unzip
 rule unzip:
     input: "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz"
     output: "input_assembly/GCA_000180675.11_ASM18067v1.fq"
@@ -34,12 +34,12 @@ rule grep_sbf1:
     seqkit grep -s -i -p {cutsite} {input} | seqkit seq -n -s -u -w 0 -o {output}
     """
 
-rule bait_trim:
-    input: "output/bait_sbf1_seqs_to_clip.fa.gz"
-    output: "output/baits_sbf1_120b_flank.txt"
-    shell:"""
-    grep -o -P '.{{0,0}}CCTGCAGG.{{0,120}}' {input} > {output}
-    """
+#rule bait_trim:
+#    input: "output/bait_sbf1_seqs_to_clip.fa.gz"
+#    output: "output/baits_sbf1_120b_flank.txt"
+#    shell:"""
+#    grep -o -P '.{{0,0}}CCTGCAGG.{{0,120}}' {input} > {output}
+#    """
 
 # blast to see if there's a microbial match
 # could use sourmash gather but not read by read
