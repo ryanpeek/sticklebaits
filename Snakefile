@@ -34,11 +34,12 @@ rule grep_sbf1:
     seqkit grep -s -i -p {cutsite} {input} | seqkit seq -n -s -u -w 0 -o {output}
     """
 
-#rule bait_trim:
-#    input: "output/bait_sbf1_seqs_to_clip.fa.gz"
-#    output: "output/baits_sbf1_120b_flank.txt"
-#    shell:"""
-#    grep -o -P '.{{0,0}}CCTGCAGG.{{0,120}}' {input} > {output}
+rule bait_trim:
+    input: "output/bait_sbf1_seqs_to_clip.fa.gz"
+    output: "output/baits_sbf1_120bp_flank.txt"
+    params: "CCTGCAGG"
+    shell:"""
+    zgrep -E -o ".{{0,0}}{params}.{{0,120}}" {input} > {output}
 #    """
 
 # blast to see if there's a microbial match
