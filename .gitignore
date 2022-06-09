@@ -48,3 +48,6 @@ input_assembly/
 
 # html files from Rmds
 *.html
+
+# big files
+output/bait_sbf1_seqs_to_clip.fa.gz
