@@ -2,3 +2,5 @@ channels:
  - bioconda
 dependencies:
  - seqkit
+# for M1 OSX needed to brew install seqkit
+# conda install -c bioconda seqkit # did not work
