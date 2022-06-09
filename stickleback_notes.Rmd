@@ -172,8 +172,27 @@ For characters instead of lines, this returns seq only w 120 bp after the cut si
 grep -o -P '.{0,0}CCTGCAGG.{0,120}' GCA_000180675.11_ASM18067v1.fq | wc -l
 ```
 
-# Run
+# To Run
+
+First make sure environment is installed. Using `mamba`:
+
+```
+mamba env create -f yamls/environment.yml
+```
+
+Then activate and make sure in a session:
 
 ```
 snakemake -r -n -c1
 ```
+
+# Looking at Stuff
+
+We can then count lines that are shorter than 128 (missing bp):
+
+```
+less baits_sbf1_120bp_flank.txt | awk '{print length}' | sort -n -r | less -N
+```
+
+Of the 22541 identified, about 22435 are 120pb long (flanking).
+
