@@ -3,7 +3,7 @@ rule all:
     input:
         "input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz",
 	"input_assembly/GCA_000180675.11_ASM18067v1_seqlens.tsv",
-        "output/baits_sbf1_120bp_flank.txt"
+        "output/baits_sbf1_120bp_flank_trimmed.txt"
 
 # assembly here: https://www.ncbi.nlm.nih.gov/assembly/GCA_000180675.1/
 rule download_genome:
@@ -44,11 +44,13 @@ rule grep_sbf1:
 
 rule bait_trim:
     input: "output/bait_sbf1_seqs_to_clip.fa.gz"
-    output: "output/baits_sbf1_120bp_flank.txt"
+    output: "output/baits_sbf1_120bp_flank_trimmed.txt"
     params: "CCTGCAGG"
     shell:"""
-    zgrep -E -o -n ".{{0,0}}{params}.{{0,120}}" {input} > {output}
+    zgrep -E -o ".{{0,0}}{params}.{{0,120}}|.{{0,0}}>.{{0,15}}" {input} | awk 'length($0)==128 || length($0)==16' > {output}
     """
+
+
 
 # blast to see if there's a microbial match
 # could use sourmash gather but not read by read
