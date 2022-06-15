@@ -161,6 +161,14 @@ Then take that output and remove line breaks and then pipe to pull just the piec
 seqkit grep -s -i -p cctgcagg input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqkit seq -n -s -u -w 0 -o output/bait_sbf1_seqs_to_clip.fa.gz
 ```
 
+Get line numbers for all cut sites and subtract one to get line number of associated header/chromo:
+
+```
+zgrep -E -n -o ".{0,0}CCTGCAGG.{0,120}" bait_sbf1_seqs_to_clip.fa.gz | less -N | cut -d':' -f1 | uniq | wc -l
+# make test file with all chromo lines in it (subtract one from line number)
+zgrep -E -n -o ".{0,0}CCTGCAGG.{0,120}" bait_sbf1_seqs_to_clip.fa.gz | less -N | cut -d':' -f1 | awk -v s=1 '{print $1-s}' > tst.tsv
+
+```
 
 
 
@@ -186,13 +194,32 @@ Then activate and make sure in a session:
 snakemake -r -n -c1
 ```
 
-# Looking at Stuff
+# Selecting Baits
 
 We can then count lines that are shorter than 128 (missing bp):
 
 ```
-less baits_sbf1_120bp_flank.txt | awk '{print length}' | sort -n -r | less -N
+awk '{print length}' baits_sbf1_120bp_flank.txt | sort -n -r | less -N
 ```
 
 Of the 22541 identified, about 22435 are 120pb long (flanking).
+
+We want to drop anything less than 128, and then `shuffle` to randomly sort, and then `top` to pick 1000 that we will actually use.
+
+To do that we need more awk:
+
+ - `NR` number of the line
+ - `$1` first field
+ - `&&` is logical
+
+```
+awk '{print length}' baits_sbf1_120bp_flank.txt | awk '(NR>0) && ($1 > 127 )' | less -N | wc -l
+```
+
+```
+awk '{print length}' baits_sbf1_120bp_flank.txt | awk '(NR>0) && ($1 > 127 )' | shuffle
+```
+
+```
+
 

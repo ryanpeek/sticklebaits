@@ -47,7 +47,7 @@ rule bait_trim:
     output: "output/baits_sbf1_120bp_flank.txt"
     params: "CCTGCAGG"
     shell:"""
-    zgrep -E -o ".{{0,0}}{params}.{{0,120}}" {input} > {output}
+    zgrep -E -o -n ".{{0,0}}{params}.{{0,120}}" {input} > {output}
     """
 
 # blast to see if there's a microbial match
