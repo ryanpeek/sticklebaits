@@ -202,12 +202,6 @@ snakemake -r -n -c1
 
 # Selecting Baits
 
-Count lines not starting with the chromo:
-
-```
-grep -v '^>' baits_sbf1_120bp_flank.txt | wc -l
-```
-
 We can then count lines that are shorter than 128 (missing bp):
 
 ```
@@ -220,6 +214,12 @@ We want to drop anything less than 128, and then `shuffle` to randomly sort, and
 
 ```
 awk 'length($0)==128 || length($0)==16' baits_sbf1_120bp_flank.txt > baits_sbf1_120bp_flank_trimmed.txt
+```
+
+Finally count the total baits here (Count lines not starting with the chromo):
+
+```
+grep -v '^>' baits_sbf1_120bp_flank.txt | wc -l
 ```
 
 Problem is this keeps potentially empty chromosomes. Need to search for lines that duplicate > on multiple consecutive lines.
