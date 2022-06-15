@@ -151,6 +151,11 @@ seqkit grep -s -i -p cctgcagg GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqki
 # AANH01000006.1
 ```
 
+Make a file with this info:
+```
+seqkit grep -s -i -p cctgcagg GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqkit seq -n -i | less -N > ../output/bait_chromo_sbf1_line_numbers.txt
+```
+
 ```
 seqkit grep -s -i -p cctgcagg GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqkit seq -n -s -l | less
 ```
@@ -160,18 +165,12 @@ Then take that output and remove line breaks and then pipe to pull just the piec
 ```
 seqkit grep -s -i -p cctgcagg input_assembly/GCA_000180675.11_ASM18067v1_genomic.fna.gz | seqkit seq -n -s -u -w 0 -o output/bait_sbf1_seqs_to_clip.fa.gz
 ```
+### Add Line Numbers
 
-Get line numbers for all cut sites and subtract one to get line number of associated header/chromo:
+Can try the `nl` command or `awk`: 
 
-```
-zgrep -E -n -o ".{0,0}CCTGCAGG.{0,120}" bait_sbf1_seqs_to_clip.fa.gz | less -N | cut -d':' -f1 | uniq | wc -l
-# make test file with all chromo lines in it (subtract one from line number)
-zgrep -E -n -o ".{0,0}CCTGCAGG.{0,120}" bait_sbf1_seqs_to_clip.fa.gz | less -N | cut -d':' -f1 | awk -v s=1 '{print $1-s}' > tst.tsv
-
-```
-
-
-
+ - `nl -w2 -s' ' bait_chromo_sbf1_line_numbers.txt`
+ 
 ### Using straight `grep`
 
 For characters instead of lines, this returns seq only w 120 bp after the cut site (CCTGCAGG):
@@ -180,6 +179,13 @@ For characters instead of lines, this returns seq only w 120 bp after the cut si
 grep -o -P '.{0,0}CCTGCAGG.{0,120}' GCA_000180675.11_ASM18067v1.fq | wc -l
 ```
 
+We can do the same but keep the chromo id here as well
+
+```
+# keep chromo location:
+zless -N -S bait_sbf1_seqs_to_clip.fa.gz | grep -E -o ".{0,0}CCTGCAGG.{0,120}|.{0,0}>.{0,15}"
+
+```
 # To Run
 
 First make sure environment is installed. Using `mamba`:
@@ -196,6 +202,12 @@ snakemake -r -n -c1
 
 # Selecting Baits
 
+Count lines not starting with the chromo:
+
+```
+grep -v '^>' baits_sbf1_120bp_flank.txt | wc -l
+```
+
 We can then count lines that are shorter than 128 (missing bp):
 
 ```
@@ -206,20 +218,12 @@ Of the 22541 identified, about 22435 are 120pb long (flanking).
 
 We want to drop anything less than 128, and then `shuffle` to randomly sort, and then `top` to pick 1000 that we will actually use.
 
-To do that we need more awk:
-
- - `NR` number of the line
- - `$1` first field
- - `&&` is logical
-
 ```
-awk '{print length}' baits_sbf1_120bp_flank.txt | awk '(NR>0) && ($1 > 127 )' | less -N | wc -l
+awk 'length($0)==128 || length($0)==16' baits_sbf1_120bp_flank.txt > baits_sbf1_120bp_flank_trimmed.txt
 ```
 
-```
-awk '{print length}' baits_sbf1_120bp_flank.txt | awk '(NR>0) && ($1 > 127 )' | shuffle
-```
+Problem is this keeps potentially empty chromosomes. Need to search for lines that duplicate > on multiple consecutive lines.
 
-```
+
 
 
